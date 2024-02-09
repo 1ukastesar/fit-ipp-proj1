@@ -34,7 +34,7 @@ class ArgumentParser(argparse.ArgumentParser):
         exclusive with other arguments
         """
 
-        if len(sys.argv) > 2:
+        if len(sys.argv) > 2: # e.g. file --help --other -> 3 arguments
             self.error("--help can't be combined with other arguments")
         return super().print_help(file)
 
