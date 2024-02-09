@@ -498,7 +498,7 @@ class Instruction():
             self.opcode = opcode
         except AttributeError:
             sys.exit(ERR_OPCODE)
-        except InstructionArgumentError:
+        except (InstructionArgumentError, InstructionBadArgumentCountError):
             sys.exit(ERR_OTHER)
 
     def __str__(self):
