@@ -489,7 +489,7 @@ class Instruction():
 
     # INSTRUCTION DEFINITIONS END
 
-    def __init__(self, opcode: str, args: list[str]):
+    def __init__(self, opcode: str, args: list[str]) -> None:
         """
         Try to build an instruction from opcode and arguments
         """
@@ -501,7 +501,7 @@ class Instruction():
         except (InstructionArgumentError, InstructionBadArgumentCountError):
             sys.exit(ERR_OTHER)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.opcode} {self.args}"
 
 
@@ -542,7 +542,7 @@ class IPPcodeParser():
         opcode, *args = line.replace('\t', ' ').split(' ')
         return Instruction(opcode, args)
 
-    def parse(self):
+    def parse(self) -> None:
         """
         Parse the input file
 
