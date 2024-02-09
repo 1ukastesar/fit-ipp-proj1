@@ -2,6 +2,8 @@
 
 import argparse
 import sys
+import signal
+from typing import TextIO
 
 from xml.etree import ElementTree
 
@@ -10,6 +12,11 @@ ERR_HEADER   = 21
 ERR_OPCODE   = 22
 ERR_OTHER    = 23
 ERR_INTERNAL = 99
+ERR_SIGINT   = 130
+
+
+def sigint_handler(signum, frame):
+    sys.exit(ERR_SIGINT)
 
 
 class ArgumentParser(argparse.ArgumentParser):
@@ -23,7 +30,8 @@ class ArgumentParser(argparse.ArgumentParser):
 
     def print_help(self, file=None):
         """
-        Override default help handler to make --help exclusive with other arguments
+        Override default help handler to make --help
+        exclusive with other arguments
         """
 
         if len(sys.argv) > 2:
@@ -33,31 +41,72 @@ class ArgumentParser(argparse.ArgumentParser):
 
 class IPPcodeParser():
 
-    def validate(self, file=sys.stdin):
-        file.readline()
+    def __init__(self):
         pass
+
+    def nextline(self, file: TextIO) -> str:
+        """
+        Read next non-empty line from stream and strip it from `' '` and
+        `'\\t'` (non-empty contains anything else than whitespace and comment)
+        """
+        for line in file:
+            stripped_line = line.strip()
+            if stripped_line and stripped_line[0] != "#":
+                return line.strip(" \t\n")
+
+    def check_header(self, file: TextIO) -> None:
+        """
+        Check header of the input file
+        """
+        try:
+            if self.nextline(file).lower() != ".IPPcode24".lower():
+                sys.exit(ERR_HEADER)
+        # Stream contains only whitespace
+        except AttributeError:
+            sys.exit(ERR_HEADER)
+
+    def parse_instruction(self, line: str) -> None:
+        """
+        Parse instruction from line
+        """
+        pass
+
+    def parse(self, file: TextIO = sys.stdin):
+        self.check_header(file)
+        while (line := self.nextline(file)):
+            print(line)
 
 
 class XMLBuilder():
 
     def __init__(self):
         self.xml = ""
+        self.order = 0
 
-    def build(self):
-        root = ElementTree.Element("program", attrib={"language": "IPPcode24"})
-        self.xml = ElementTree.tostring(root, encoding="UTF-8", xml_declaration=True)
+    def __get_order(self) -> int:
+        self.order += 1
+        return self.order
+
+    # def instruction(self, opcode: str, *args: (enum, str)) -> ElementTree.Element:
+    #     instruction = ElementTree.Element("instruction", attrib={"order": str(self.__get_order()), "opcode": opcode})
+
+    def build(self) -> None:
+        program = ElementTree.Element("program", attrib={"language": "IPPcode24"})
+        # program.append(self.instruction("MOVE", "var", "symb"))
+        self.xml = ElementTree.tostring(program, encoding="UTF-8", xml_declaration=True)
 
     def write(self, file=sys.stdout):
         print(self.xml.decode().replace("'", '"'), file=file)
 
 
+signal.signal(signal.SIGINT, sigint_handler)
 argparser = ArgumentParser(description="Parser for IPPcode24")
 
 args = argparser.parse_args()
 
 parser = IPPcodeParser()
-parser.validate()
+parser.parse()
 
-writer = XMLBuilder()
-writer.build()
-writer.write()
+xml = XMLBuilder()
+xml.build()
+xml.write()
