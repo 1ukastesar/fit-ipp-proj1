@@ -41,25 +41,26 @@ class ArgumentParser(argparse.ArgumentParser):
 
 class IPPcodeParser():
 
-    def __init__(self):
+    def __init__(self, stream: TextIO = sys.stdin):
+        self.stream = stream
         pass
 
-    def nextline(self, file: TextIO) -> str:
+    def nextline(self) -> str:
         """
         Read next non-empty line from stream and strip it from `' '` and
         `'\\t'` (non-empty contains anything else than whitespace and comment)
         """
-        for line in file:
+        for line in self.stream:
             stripped_line = line.strip()
             if stripped_line and stripped_line[0] != "#":
                 return line.strip(" \t\n")
 
-    def check_header(self, file: TextIO) -> None:
+    def check_header(self) -> None:
         """
-        Check header of the input file
+        Check header of the input stream
         """
         try:
-            if self.nextline(file).lower() != ".IPPcode24".lower():
+            if self.nextline().lower() != ".IPPcode24".lower():
                 sys.exit(ERR_HEADER)
         # Stream contains only whitespace
         except AttributeError:
@@ -71,10 +72,10 @@ class IPPcodeParser():
         """
         pass
 
-    def parse(self, file: TextIO = sys.stdin):
-        self.check_header(file)
-        while (line := self.nextline(file)):
-            print(line)
+    def parse(self):
+        self.check_header()
+        while (line := self.nextline()):
+            self.parse_instruction(line)
 
 
 class XMLBuilder():
