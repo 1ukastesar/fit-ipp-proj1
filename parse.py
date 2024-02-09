@@ -11,6 +11,7 @@ ERR_OPCODE   = 22
 ERR_OTHER    = 23
 ERR_INTERNAL = 99
 
+
 class ArgumentParser(argparse.ArgumentParser):
     def error(self, message):
         """
@@ -20,17 +21,22 @@ class ArgumentParser(argparse.ArgumentParser):
         self.print_usage(sys.stderr)
         self.exit(ERR_PARAM, '%s: error: %s\n' % (self.prog, message))
 
-    def print_help(self, file = None):
+    def print_help(self, file=None):
         """
         Override default help handler to make --help exclusive with other arguments
         """
+
         if len(sys.argv) > 2:
             self.error("--help can't be combined with other arguments")
         return super().print_help(file)
-    
+
+
 class IPPcodeParser():
-    def validate(self):
+
+    def validate(self, file=sys.stdin):
+        file.readline()
         pass
+
 
 class XMLBuilder():
 
@@ -43,6 +49,7 @@ class XMLBuilder():
 
     def write(self, file=sys.stdout):
         print(self.xml.decode().replace("'", '"'), file=file)
+
 
 argparser = ArgumentParser(description="Parser for IPPcode24")
 
