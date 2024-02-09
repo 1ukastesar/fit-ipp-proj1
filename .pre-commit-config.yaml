@@ -15,4 +15,5 @@ repos:
   rev: v4.5.0
   hooks:
     - id: trailing-whitespace
+      exclude: is_it_ok.sh
     - id: end-of-file-fixer
