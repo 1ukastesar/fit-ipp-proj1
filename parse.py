@@ -8,12 +8,12 @@ from typing import TextIO
 from xml.etree import ElementTree
 from xml.sax.saxutils import escape
 
-ERR_PARAM    = 10
-ERR_HEADER   = 21
-ERR_OPCODE   = 22
-ERR_OTHER    = 23
+ERR_PARAM = 10
+ERR_HEADER = 21
+ERR_OPCODE = 22
+ERR_OTHER = 23
 ERR_INTERNAL = 99
-ERR_SIGINT   = 130
+ERR_SIGINT = 130
 
 IPPCODE_NAME = "IPPcode24"
 
@@ -41,7 +41,7 @@ class ArgumentParser(argparse.ArgumentParser):
 
         if len(sys.argv) > 2:  # e.g. file --help --other -> 3 arguments
             self.error("--help can't be combined with other arguments")
-        return super().print_help(file=sys.stdout) # print help to stdout
+        return super().print_help(file=sys.stdout)  # print help to stdout
 
 
 class InstructionArgumentError(Exception):
@@ -59,7 +59,6 @@ class InstructionPattern:
     var    = re.compile(r"^(GF|LF|TF)@" + var_name)
     const  = re.compile(r"^(int|bool|string|nil)@(.*)$")
     number = re.compile(r"^[-+]?[0-9]+$")
-
 
 class Instruction():
 
@@ -530,9 +529,9 @@ class IPPcodeParser():
         non-empty contains anything else than whitespace and comment
         """
         for line in self.stream:
-            line = line[:line.find("#")] # Remove comments
-            line = line.strip(" \t\n") # Remove trailing and preceding whitespace
-            if line: # If still not empty, return
+            line = line[:line.find("#")]  # Remove comments
+            line = line.strip(" \t\n")  # Remove trailing and preceding whitespace
+            if line:  # If still not empty, return
                 return line
 
     def check_header(self) -> None:
@@ -570,6 +569,7 @@ class IPPcodeParser():
         """
         return self.instruction_list
 
+
 class XMLBuilder():
 
     indent_width = 4
@@ -595,7 +595,7 @@ class XMLBuilder():
         instruction = ElementTree.Element("instruction", attrib={"order": str(self.get_instruction_order()), "opcode": opcode})
         try:
             for i, arg in enumerate(args, start=1):
-                ElementTree.SubElement(instruction, f"arg{i}", attrib={"type" : arg[0]}).text = arg[1]
+                ElementTree.SubElement(instruction, f"arg{i}", attrib={"type": arg[0]}).text = arg[1]
         except TypeError:
             pass
         return instruction
@@ -618,6 +618,7 @@ class XMLBuilder():
             xml_declaration=True
             ).decode().replace("'", '"')
         print(xml, file=file)
+
 
 # It can be used as a module or a standalone script
 if __name__ == "__main__":
