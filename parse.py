@@ -55,10 +55,11 @@ class InstructionBadArgumentCountError(Exception):
 class InstructionPattern:
 
     var_name = r"([a-zA-Z_\-$&%*!?][a-zA-Z0-9_\-$&%*!?]*)$"
-    label  = re.compile(r"^" + var_name)
-    var    = re.compile(r"^(GF|LF|TF)@" + var_name)
-    const  = re.compile(r"^(int|bool|string|nil)@(.*)$")
     number = re.compile(r"^[-+]?[0-9]+$")
+    label = re.compile(r"^" + var_name)
+    const = re.compile(r"^(int|bool|string|nil)@(.*)$")
+    var = re.compile(r"^(GF|LF|TF)@" + var_name)
+
 
 class Instruction():
 
@@ -77,20 +78,22 @@ class Instruction():
         """
         <symb> ::= <var> | <const>
         """
-        if (match := self.pattern.var.match(arg)):
+        if (self.pattern.var.match(arg)):
             return "var", arg
         elif (match := self.pattern.const.match(arg)):
-            if match.group(1) == "nil" and match.group(2) == "nil":
-                return match.group(1), match.group(2)
-            if match.group(1) == "int" and self.pattern.number.match(match.group(2)):
-                return match.group(1), match.group(2)
-            if match.group(1) == "bool" and match.group(2).lower in ["true", "false"]:
-                return match.group(1), match.group(2).lower()
-            if match.group(1) == "string":
-                return match.group(1), escape(match.group(2))
-            raise InstructionArgumentError
-        else:
-            raise InstructionArgumentError
+            match match.group(1):
+                case "nil":
+                    if match.group(2) == "nil":
+                        return match.group(1), match.group(2)
+                case "int":
+                    if self.pattern.number.match(match.group(2)):
+                        return match.group(1), match.group(2)
+                case "bool":
+                    if match.group(2).lower in ["true", "false"]:
+                        return match.group(1), match.group(2).lower()
+                case "string":
+                    return match.group(1), escape(match.group(2))
+        raise InstructionArgumentError
 
     def label(self, arg: str) -> tuple[str, str]:
         """
@@ -530,7 +533,7 @@ class IPPcodeParser():
         """
         for line in self.stream:
             line = line[:line.find("#")]  # Remove comments
-            line = line.strip(" \t\n")  # Remove trailing and preceding whitespace
+            line = line.strip(" \t\n")  # Remove whitespace around
             if line:  # If still not empty, return
                 return line
 
@@ -578,7 +581,10 @@ class XMLBuilder():
         """
         Initialize XMLBuilder with "program" root element
         """
-        self.program = ElementTree.Element("program", attrib={"language": IPPCODE_NAME})
+        self.program = ElementTree.Element(
+            "program",
+            attrib={"language": IPPCODE_NAME}
+            )
         self.order = 0
 
     def get_instruction_order(self) -> int:
@@ -588,14 +594,27 @@ class XMLBuilder():
         self.order += 1
         return self.order
 
-    def build_instruction(self, opcode: str, args: list[tuple[str, str]]) -> ElementTree.Element:
+    def build_instruction(
+            self,
+            opcode: str,
+            args: list[tuple[str, str]]
+            ) -> ElementTree.Element:
         """
         Build a single instruction element
         """
-        instruction = ElementTree.Element("instruction", attrib={"order": str(self.get_instruction_order()), "opcode": opcode})
+        instruction = ElementTree.Element(
+            "instruction",
+            attrib={"order": str(self.get_instruction_order()),
+                    "opcode": opcode}
+            )
         try:
             for i, arg in enumerate(args, start=1):
-                ElementTree.SubElement(instruction, f"arg{i}", attrib={"type": arg[0]}).text = arg[1]
+                ElementTree.SubElement(
+                    instruction,
+                    f"arg{i}",
+                    attrib={"type": arg[0]},
+                    text=arg[1]
+                    )
         except TypeError:
             pass
         return instruction
@@ -605,7 +624,9 @@ class XMLBuilder():
         Build XML from internal representation
         """
         for instruction in instruction_list:
-            self.program.append(self.build_instruction(instruction.opcode, instruction.args))
+            self.program.append(
+                self.build_instruction(instruction.opcode, instruction.args)
+                )
 
     def write(self, file=sys.stdout) -> None:
         """
