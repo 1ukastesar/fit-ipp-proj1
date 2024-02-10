@@ -6,6 +6,7 @@ import signal
 import sys
 from typing import TextIO
 from xml.etree import ElementTree
+from xml.sax.saxutils import escape
 
 ERR_PARAM    = 10
 ERR_HEADER   = 21
@@ -80,13 +81,15 @@ class Instruction():
         if (match := self.pattern.var.match(arg)):
             return "var", arg
         elif (match := self.pattern.const.match(arg)):
-            if match.group(1) == "nil" and match.group(2) != "nil":
-                raise InstructionArgumentError
-            if match.group(1) == "int" and not match.group(2).isdigit():
-                raise InstructionArgumentError
-            if match.group(1) == "bool" and match.group(2) not in ["true", "false"]:
-                raise InstructionArgumentError
-            return match.group(1), match.group(2)
+            if match.group(1) == "nil" and match.group(2) == "nil":
+                return match.group(1), match.group(2)
+            if match.group(1) == "int" and self.pattern.number.match(match.group(2)):
+                return match.group(1), match.group(2)
+            if match.group(1) == "bool" and match.group(2).lower in ["true", "false"]:
+                return match.group(1), match.group(2).lower()
+            if match.group(1) == "string":
+                return match.group(1), escape(match.group(2))
+            raise InstructionArgumentError
         else:
             raise InstructionArgumentError
 
