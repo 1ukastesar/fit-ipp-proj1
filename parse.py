@@ -53,7 +53,7 @@ class InstructionBadArgumentCountError(Exception):
 
 class InstructionPattern:
 
-    var_name = "([a-zA-Z_\-\$&%*!?][a-zA-Z0-9_\-\$&%\*!?]*)$"
+    var_name = "([a-zA-Z_\-$&%*!?][a-zA-Z0-9_\-$&%*!?]*)$"
     label = re.compile("^" + var_name)
     var   = re.compile("^(GF|LF|TF)@" + var_name)
     const = re.compile("^(int|bool|string|nil)@(.*)$")
