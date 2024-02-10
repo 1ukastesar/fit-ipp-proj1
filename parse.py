@@ -624,6 +624,9 @@ if __name__ == "__main__":
     parser.parse()
     instruction_list = parser.get_internal_repr()
 
+    # for instruction in instruction_list:
+    #     print(instruction)
+
     # Build XML from internal representation
     xml = XMLBuilder()
     xml.build(instruction_list)
