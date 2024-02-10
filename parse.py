@@ -40,7 +40,7 @@ class ArgumentParser(argparse.ArgumentParser):
 
         if len(sys.argv) > 2:  # e.g. file --help --other -> 3 arguments
             self.error("--help can't be combined with other arguments")
-        return super().print_help(file)
+        return super().print_help(file=sys.stdout) # print help to stdout
 
 
 class InstructionArgumentError(Exception):
@@ -625,7 +625,7 @@ if __name__ == "__main__":
     instruction_list = parser.get_internal_repr()
 
     # for instruction in instruction_list:
-    #     print(instruction)
+    #     print(instruction, file=sys.stderr)
 
     # Build XML from internal representation
     xml = XMLBuilder()
