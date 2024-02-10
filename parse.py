@@ -79,6 +79,12 @@ class Instruction():
         if (match := self.pattern.var.match(arg)):
             return "var", arg
         elif (match := self.pattern.const.match(arg)):
+            if match.group(1) == "nil" and match.group(2) != "nil":
+                raise InstructionArgumentError
+            if match.group(1) == "int" and not match.group(2).isdigit():
+                raise InstructionArgumentError
+            if match.group(1) == "bool" and match.group(2) not in ["true", "false"]:
+                raise InstructionArgumentError
             return match.group(1), match.group(2)
         else:
             raise InstructionArgumentError
