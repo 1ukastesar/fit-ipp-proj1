@@ -603,7 +603,7 @@ class XMLBuilder():
         for instruction in instruction_list:
             self.program.append(self.build_instruction(instruction.opcode, instruction.args))
 
-    def write(self, file=sys.stdout):
+    def write(self, file=sys.stdout) -> None:
         """
         Write internal XML to a file
         """
