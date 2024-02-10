@@ -520,9 +520,10 @@ class IPPcodeParser():
         non-empty contains anything else than whitespace and comment
         """
         for line in self.stream:
-            stripped_line = line.strip()
-            if stripped_line and stripped_line[0] != "#":
-                return line.strip(" \t\n")
+            line = line[:line.find("#")] # Remove comments
+            line = line.strip(" \t\n") # Remove trailing and preceding whitespace
+            if line: # If still not empty, return
+                return line
 
     def check_header(self) -> None:
         """
