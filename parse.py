@@ -6,7 +6,6 @@ import signal
 import sys
 from typing import TextIO
 from xml.etree import ElementTree
-from xml.sax.saxutils import escape
 
 ERR_PARAM = 10
 ERR_HEADER = 21
@@ -89,10 +88,10 @@ class Instruction():
                     if self.pattern.number.match(match.group(2)):
                         return match.group(1), match.group(2)
                 case "bool":
-                    if match.group(2).lower in ["true", "false"]:
+                    if match.group(2).lower() in ["true", "false"]:
                         return match.group(1), match.group(2).lower()
                 case "string":
-                    return match.group(1), escape(match.group(2))
+                    return match.group(1), match.group(2)
         raise InstructionArgumentError
 
     def label(self, arg: str) -> tuple[str, str]:
@@ -613,8 +612,7 @@ class XMLBuilder():
                     instruction,
                     f"arg{i}",
                     attrib={"type": arg[0]},
-                    text=arg[1]
-                    )
+                    ).text = arg[1]
         except TypeError:
             pass
         return instruction
