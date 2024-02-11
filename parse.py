@@ -312,16 +312,15 @@ class Instruction():
 
     def NOT(self, args: list[str]):
         """
-        NOT <var> <symb> <symb>
+        NOT <var> <symb>
         """
         if len(args) != 2:
             raise InstructionBadArgumentCountError
 
         var = self.var(args[0])
         symb1 = self.symb(args[1])
-        symb2 = self.symb(args[2])
 
-        return [var, symb1, symb2]
+        return [var, symb1]
 
     def INT2CHAR(self, args: list[str]):
         """
