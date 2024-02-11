@@ -1,6 +1,8 @@
 archive_name=xtesar43.zip
 testdir=testdir
 
+default: test pack
+
 pack:
 	zip $(archive_name) parse.py readme1.md rozsireni
 	mkdir -p $(testdir)
