@@ -534,7 +534,8 @@ class IPPcodeParser():
         non-empty contains anything else than whitespace and comment
         """
         for line in self.stream:
-            line = line[:line.find("#")]  # Remove comments
+            if (comment_start := line.find("#")) != -1:  # Remove comments
+                line = line[:comment_start]
             line = line.strip(" \t\n")  # Remove whitespace around
             if line:  # If still not empty, return
                 return line
