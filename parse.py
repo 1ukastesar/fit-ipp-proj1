@@ -508,7 +508,7 @@ class Instruction():
         """
         try:
             self.args = getattr(self, opcode.upper())(args)
-            self.opcode = opcode
+            self.opcode = opcode.upper()
         except AttributeError:
             sys.exit(ERR_OPCODE)
         except (InstructionArgumentError, InstructionBadArgumentCountError):
