@@ -6,6 +6,9 @@ pack:
 	mkdir -p $(testdir)
 	./is_it_ok.sh $(archive_name) $(testdir) --force
 
+test:
+	cd tests/supplementary-tests/parse && make
+
 clean:
 	rm -f $(archive_name) *.log
 	rm -rf $(testdir)
