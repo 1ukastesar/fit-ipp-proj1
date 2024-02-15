@@ -61,6 +61,8 @@ class InstructionPattern:
     label = re.compile(r"^" + var_name)
     const = re.compile(r"^(int|bool|string|nil)@(.*)$")
     var = re.compile(r"^(GF|LF|TF)@" + var_name)
+    backslash = re.compile(r"\\")
+    escape = re.compile(backslash.pattern + r"[0-9]{3}")
 
 
 class Instruction():
@@ -94,6 +96,14 @@ class Instruction():
                     if match.group(2).lower() in ["true", "false"]:
                         return match.group(1), match.group(2).lower()
                 case "string":
+                    string = match.group(2)
+                    # For each backslash present
+                    for escape in self.pattern.backslash.finditer(string):
+                        # Check if it's a valid escape sequence
+                        if not self.pattern.escape.match(
+                            string[escape.start():]
+                        ):
+                            raise InstructionArgumentError
                     return match.group(1), match.group(2)
         raise InstructionArgumentError
 
