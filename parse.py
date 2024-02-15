@@ -531,11 +531,22 @@ class Instruction():
         return f"{self.opcode} {self.args}"
 
 
+class Stats:
+    def __init__(self) -> None:
+        self.loc = 0
+        self.comments = 0
+        self.labels = 0
+        self.jumps = 0
+        self.fwjumps = 0
+        self.backjumps = 0
+
+
 class IPPcodeParser():
 
     def __init__(self, stream: TextIO = sys.stdin) -> None:
         self.stream = stream
         self.instruction_list = []
+        self.stats = Stats()
         pass
 
     def nextline(self) -> str:
@@ -547,6 +558,7 @@ class IPPcodeParser():
         """
         for line in self.stream:
             if (comment_start := line.find("#")) != -1:  # Remove comments
+                self.stats.comments += 1
                 line = line[:comment_start]
             line = line.strip(" \t\n")  # Remove whitespace around
             if line:  # If still not empty, return
@@ -580,6 +592,7 @@ class IPPcodeParser():
         self.check_header()
         while (line := self.nextline()):
             self.instruction_list.append(self.parse_instruction(line))
+            self.stats.loc += 1
 
     def get_internal_repr(self) -> list[Instruction]:
         """
