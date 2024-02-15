@@ -675,6 +675,17 @@ if __name__ == "__main__":
 
     # Handle CLI arguments
     argparser = ArgumentParser(description="Parser for IPPcode24")
+    argparser.add_argument("--stats",
+                           action="append",
+                           choices=[
+                               "--loc",
+                               "--comments",
+                               "--labels",
+                               "--jumps",
+                               "--fwjumps",
+                               "--backjumps"
+                               ],
+                           help="Print statistics")
     args = argparser.parse_args()
 
     # Parse input
