@@ -3,3 +3,4 @@
 tests/jexamxml
 options
 testdir/
+__pycache__/
