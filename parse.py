@@ -63,6 +63,7 @@ class InstructionPattern:
     var = re.compile(r"^(GF|LF|TF)@" + var_name)
     backslash = re.compile(r"\\")
     escape = re.compile(backslash.pattern + r"[0-9]{3}")
+    opcode = re.compile("^[a-zA-Z0-9]+$")
 
 
 class Instruction():
@@ -517,6 +518,8 @@ class Instruction():
         Try to build an instruction from opcode and arguments
         """
         try:
+            if not self.pattern.opcode.match(opcode):
+                sys.exit(ERR_OTHER)
             self.args = getattr(self, opcode.upper())(args)
             self.opcode = opcode.upper()
         except AttributeError:
