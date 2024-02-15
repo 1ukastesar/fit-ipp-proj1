@@ -1,4 +1,7 @@
 #!/usr/bin/env python3.10
+# @file parse.py
+# @author Lukas Tesar <xtesar43@stud.fit.vutbr.cz>
+# @brief Main parser file
 
 import argparse
 import signal

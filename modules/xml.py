@@ -1,3 +1,8 @@
+##
+# @file xml.py
+# @author Lukas Tesar <xtesar43@stud.fit.vutbr.cz>
+# @brief Module for building XML from internal representation
+
 from typing import TextIO
 from xml.etree import ElementTree
 

@@ -1,3 +1,8 @@
+##
+# @file modules/error.py
+# @author Lukas Tesar <xtesar43@stud.fit.vutbr.cz>
+# @brief Error code definitions
+
 ERR_PARAM = 10
 ERR_HEADER = 21
 ERR_OPCODE = 22

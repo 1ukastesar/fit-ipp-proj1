@@ -1,3 +1,8 @@
+##
+# @file modules/instruction.py
+# @author Lukas Tesar <xtesar43@stud.fit.vutbr.cz>
+# @brief Module for parsing and validating instructions
+
 import re
 import sys
 

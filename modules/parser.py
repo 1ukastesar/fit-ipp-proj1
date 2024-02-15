@@ -1,3 +1,8 @@
+##
+# @file modules/parser.py
+# @author Lukas Tesar <xtesar43@stud.fit.vutbr.cz>
+# @brief Parser module for IPPcode24
+
 import sys
 from typing import TextIO
 
