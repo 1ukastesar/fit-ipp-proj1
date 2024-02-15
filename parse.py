@@ -587,9 +587,7 @@ class IPPcodeParser():
 
 class XMLBuilder():
 
-    indent_width = 4
-
-    def __init__(self) -> None:
+    def __init__(self, indent_width: int = 4) -> None:
         """
         Initialize XMLBuilder with "program" root element
         """
@@ -598,6 +596,7 @@ class XMLBuilder():
             attrib={"language": IPPCODE_NAME}
             )
         self.order = 0
+        self.indent_width = indent_width
 
     def get_instruction_order(self) -> int:
         """"
