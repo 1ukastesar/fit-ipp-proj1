@@ -4,7 +4,7 @@ testdir=testdir
 default: test pack
 
 pack:
-	zip $(archive_name) parse.py readme1.md rozsireni
+	zip $(archive_name) parse.py modules/*.py readme1.md rozsireni
 	mkdir -p $(testdir)
 	./is_it_ok.sh $(archive_name) $(testdir) --force
 
