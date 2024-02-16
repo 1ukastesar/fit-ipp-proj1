@@ -10,7 +10,7 @@ from modules.instruction import Instruction
 from modules.parser import IPPCODE_NAME
 
 
-class XMLBuilder():
+class XMLBuilder:
 
     def __init__(self, indent_width: int = 4) -> None:
         """

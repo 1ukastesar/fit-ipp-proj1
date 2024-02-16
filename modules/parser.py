@@ -22,7 +22,7 @@ class Stats:
         self.backjumps = 0
 
 
-class IPPcodeParser():
+class IPPcodeParser:
 
     def __init__(self, stream: TextIO = sys.stdin) -> None:
         self.stream = stream

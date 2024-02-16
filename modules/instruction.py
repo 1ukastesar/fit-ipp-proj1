@@ -32,7 +32,7 @@ class InstructionPattern:
     opcode = re.compile("^[a-zA-Z0-9]+$")
 
 
-class Instruction():
+class Instruction:
 
     pattern = InstructionPattern()
 
