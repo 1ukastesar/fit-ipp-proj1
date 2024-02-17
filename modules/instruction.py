@@ -21,6 +21,7 @@ class InstructionPattern:
 
     var_name = r"([a-zA-Z_\-$&%*!?][a-zA-Z0-9_\-$&%*!?]*)$"
     __dec = r"^[-+]?[0-9]+$"
+    # __dec = r"^[+-]?[0-9]+(?!\S)$"
     __hexa = r"^-?0x[0-9a-fA-F]+$"
     __octal = r"^-?0o?[0-7]+$"
     number = re.compile(r"(" + __dec + r"|" + __hexa + r"|" + __octal + r")")
