@@ -7,6 +7,7 @@ import re
 import sys
 
 from modules.error import ERR_OPCODE, ERR_OTHER
+from modules.stats import Stats
 
 
 class InstructionArgumentError(Exception):
@@ -479,15 +480,20 @@ class Instruction:
 
     # INSTRUCTION DEFINITIONS END
 
-    def __init__(self, opcode: str, args: list[str]) -> None:
+    def __init__(self, opcode: str, args: list[str], stats: Stats) -> None:
         """
         Try to build an instruction from opcode and arguments
         """
+        self.stats = stats
         try:
             if not self.pattern.opcode.match(opcode):
                 sys.exit(ERR_OTHER)
             self.args = getattr(self, opcode.upper())(args)
             self.opcode = opcode.upper()
+            try:
+                self.stats.opcodes[self.opcode] += 1
+            except KeyError:
+                self.stats.opcodes[self.opcode] = 1
         except AttributeError:
             sys.exit(ERR_OPCODE)
         except (InstructionArgumentError, InstructionBadArgumentCountError):
