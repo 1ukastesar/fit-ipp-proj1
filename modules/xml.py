@@ -72,5 +72,5 @@ class XMLBuilder:
             self.program,
             encoding="UTF-8",
             xml_declaration=True
-            ).decode().replace("'", '"')
+            ).decode()
         print(xml, file=file)
