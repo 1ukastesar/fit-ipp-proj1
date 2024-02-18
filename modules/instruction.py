@@ -152,6 +152,9 @@ class Instruction:
         if len(args) != 1:
             raise InstructionBadArgumentCountError
 
+        label = self.label(args[0])
+        self.jump(label)
+
         return [self.label(args[0])]
 
     def RETURN(self, args: list[str]):
