@@ -1,6 +1,6 @@
 *.zip
 *.log
-tests/jexamxml
 options
 testdir/
 __pycache__/
+.vscode/
