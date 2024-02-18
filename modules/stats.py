@@ -74,16 +74,19 @@ class ArgParser:
             return False
 
     def __print_stats_group(self) -> None:
-        prefix = "--stats="
-        if self.argv[0].startswith(prefix):
-            file = self.argv[0].removeprefix(prefix)
+        grp_prefix = "--stats="
+        if self.argv[0].startswith(grp_prefix):
+            file = self.argv[0].removeprefix(grp_prefix)
             if file in self.used_files:
                 raise StatsFileUsedTwiceError
             self.used_files.append(file)
             self.argv = self.argv[1:]
             with open(file, "w") as file:
-                while self.argv and not self.argv[0].startswith(prefix):
-                    argname = self.argv[0].removeprefix("--")
+                while self.argv and not self.argv[0].startswith(grp_prefix):
+                    arg_prefix = "--"
+                    if not self.argv[0].startswith(arg_prefix):
+                        raise UnexpectedArgumentError
+                    argname = self.argv[0].removeprefix(arg_prefix)
                     if argname.startswith("print="):
                         string = argname.removeprefix("print=")
                         file.write(f"{string}\n")
