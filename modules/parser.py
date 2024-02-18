@@ -4,25 +4,16 @@
 # @brief Parser module for IPPcode24
 
 import sys
-from typing import TextIO
+from typing import Optional, TextIO
 
 from modules.error import ERR_HEADER
 from modules.instruction import Instruction
+from modules.stats import Stats
 
 IPPCODE_NAME = "IPPcode24"
 
 
-class Stats:
-    def __init__(self) -> None:
-        self.loc = 0
-        self.comments = 0
-        self.labels = 0
-        self.jumps = 0
-        self.fwjumps = 0
-        self.backjumps = 0
-
-
-class IPPcodeParser():
+class IPPcodeParser:
 
     def __init__(self, stream: TextIO = sys.stdin) -> None:
         self.stream = stream
@@ -30,7 +21,7 @@ class IPPcodeParser():
         self.stats = Stats()
         pass
 
-    def nextline(self) -> str:
+    def nextline(self) -> Optional[str]:
         """
         Read next non-empty line from stream and strip it from `' '` and
         `'\\t'`
@@ -61,7 +52,7 @@ class IPPcodeParser():
         Parse instruction from line
         """
         opcode, *args = line.replace('\t', ' ').split(' ')
-        return Instruction(opcode, args)
+        return Instruction(opcode, args, self.stats)
 
     def parse(self) -> None:
         """
@@ -74,9 +65,16 @@ class IPPcodeParser():
         while (line := self.nextline()):
             self.instruction_list.append(self.parse_instruction(line))
             self.stats.loc += 1
+        self.stats.badjumps = len(self.stats.unresolved_labels)
 
     def get_internal_repr(self) -> list[Instruction]:
         """
         Return internal representation of the provided IPPcode
         """
         return self.instruction_list
+
+    def get_stats(self) -> Stats:
+        """
+        Return statistics of the provided IPPcode
+        """
+        return self.stats

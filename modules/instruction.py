@@ -7,6 +7,7 @@ import re
 import sys
 
 from modules.error import ERR_OPCODE, ERR_OTHER
+from modules.stats import Stats
 
 
 class InstructionArgumentError(Exception):
@@ -33,7 +34,7 @@ class InstructionPattern:
     opcode = re.compile("^[a-zA-Z0-9]+$")
 
 
-class Instruction():
+class Instruction:
 
     pattern = InstructionPattern()
 
@@ -92,6 +93,13 @@ class Instruction():
             return "type", arg
         else:
             raise InstructionArgumentError
+
+    def jump(self, label: str) -> None:
+        self.stats.jumps += 1
+        if label in self.stats.defined_labels:
+            self.stats.backjumps += 1
+        else:
+            self.stats.unresolved_labels.append(label)
 
     # INSTRUCTION DEFINITIONS
 
@@ -152,6 +160,8 @@ class Instruction():
         """
         if args:
             raise InstructionBadArgumentCountError
+
+        self.stats.jumps += 1
 
     def PUSHS(self, args: list[str]):
         """
@@ -416,7 +426,18 @@ class Instruction():
         if len(args) != 1:
             raise InstructionBadArgumentCountError
 
-        return [self.label(args[0])]
+        label = self.label(args[0])
+        if label not in self.stats.defined_labels:
+            self.stats.defined_labels.add(label)
+            self.stats.labels += 1
+            if label in self.stats.unresolved_labels:
+                self.stats.fwjumps += \
+                    self.stats.unresolved_labels.count(label)
+                self.stats.unresolved_labels = list(
+                    filter((label).__ne__, self.stats.unresolved_labels)
+                )
+
+        return [label]
 
     def JUMP(self, args: list[str]):
         """
@@ -425,7 +446,10 @@ class Instruction():
         if len(args) != 1:
             raise InstructionBadArgumentCountError
 
-        return [self.label(args[0])]
+        label = self.label(args[0])
+        self.jump(label)
+
+        return [label]
 
     def JUMPIFEQ(self, args: list[str]):
         """
@@ -437,6 +461,7 @@ class Instruction():
         label = self.label(args[0])
         symb1 = self.symb(args[1])
         symb2 = self.symb(args[2])
+        self.jump(label)
 
         return [label, symb1, symb2]
 
@@ -450,6 +475,7 @@ class Instruction():
         label = self.label(args[0])
         symb1 = self.symb(args[1])
         symb2 = self.symb(args[2])
+        self.jump(label)
 
         return [label, symb1, symb2]
 
@@ -480,15 +506,20 @@ class Instruction():
 
     # INSTRUCTION DEFINITIONS END
 
-    def __init__(self, opcode: str, args: list[str]) -> None:
+    def __init__(self, opcode: str, args: list[str], stats: Stats) -> None:
         """
         Try to build an instruction from opcode and arguments
         """
+        self.stats = stats
         try:
             if not self.pattern.opcode.match(opcode):
                 sys.exit(ERR_OTHER)
             self.args = getattr(self, opcode.upper())(args)
             self.opcode = opcode.upper()
+            try:
+                self.stats.opcodes[self.opcode] += 1
+            except KeyError:
+                self.stats.opcodes[self.opcode] = 1
         except AttributeError:
             sys.exit(ERR_OPCODE)
         except (InstructionArgumentError, InstructionBadArgumentCountError):
