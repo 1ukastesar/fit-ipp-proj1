@@ -19,6 +19,8 @@ class Stats:
         self.backjumps = 0
         self.badjumps = 0
         self.opcodes = {}
+        self.defined_labels = set()
+        self.unresolved_labels = list()
 
 
 class UnexpectedArgumentError(Exception):

@@ -93,6 +93,13 @@ class Instruction:
         else:
             raise InstructionArgumentError
 
+    def jump(self, label: str) -> None:
+        self.stats.jumps += 1
+        if label in self.stats.defined_labels:
+            self.stats.backjumps += 1
+        else:
+            self.stats.unresolved_labels.append(label)
+
     # INSTRUCTION DEFINITIONS
 
     def MOVE(self, args: list[str]):
@@ -152,6 +159,8 @@ class Instruction:
         """
         if args:
             raise InstructionBadArgumentCountError
+
+        self.stats.jumps += 1
 
     def PUSHS(self, args: list[str]):
         """
@@ -416,7 +425,18 @@ class Instruction:
         if len(args) != 1:
             raise InstructionBadArgumentCountError
 
-        return [self.label(args[0])]
+        label = self.label(args[0])
+        if label not in self.stats.defined_labels:
+            self.stats.defined_labels.add(label)
+            self.stats.labels += 1
+            if label in self.stats.unresolved_labels:
+                self.stats.fwjumps += \
+                    self.stats.unresolved_labels.count(label)
+                self.stats.unresolved_labels = list(
+                    filter((label).__ne__, self.stats.unresolved_labels)
+                )
+
+        return [label]
 
     def JUMP(self, args: list[str]):
         """
@@ -425,7 +445,10 @@ class Instruction:
         if len(args) != 1:
             raise InstructionBadArgumentCountError
 
-        return [self.label(args[0])]
+        label = self.label(args[0])
+        self.jump(label)
+
+        return [label]
 
     def JUMPIFEQ(self, args: list[str]):
         """
@@ -437,6 +460,7 @@ class Instruction:
         label = self.label(args[0])
         symb1 = self.symb(args[1])
         symb2 = self.symb(args[2])
+        self.jump(label)
 
         return [label, symb1, symb2]
 
@@ -450,6 +474,7 @@ class Instruction:
         label = self.label(args[0])
         symb1 = self.symb(args[1])
         symb2 = self.symb(args[2])
+        self.jump(label)
 
         return [label, symb1, symb2]
 

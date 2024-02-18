@@ -65,6 +65,7 @@ class IPPcodeParser:
         while (line := self.nextline()):
             self.instruction_list.append(self.parse_instruction(line))
             self.stats.loc += 1
+        self.stats.badjumps = len(self.stats.unresolved_labels)
 
     def get_internal_repr(self) -> list[Instruction]:
         """
