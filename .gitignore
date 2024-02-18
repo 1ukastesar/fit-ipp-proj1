@@ -1,6 +1,7 @@
 *.zip
 *.log
 options
+file*
 testdir/
 __pycache__/
 .vscode/
