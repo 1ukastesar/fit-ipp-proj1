@@ -32,6 +32,7 @@ if __name__ == "__main__":
     parser.parse()
     instruction_list = parser.get_internal_repr()
 
+    # Print statistics as requested by provided arguments
     argparser.print_stats(parser.get_stats())
 
     # Build XML from internal representation
