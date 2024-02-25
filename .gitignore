@@ -3,5 +3,6 @@
 options
 file*
 testdir/
+tests/
 __pycache__/
 .vscode/
