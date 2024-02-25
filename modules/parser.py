@@ -51,7 +51,9 @@ class IPPcodeParser:
         """
         Parse instruction from line
         """
-        opcode, *args = line.replace('\t', ' ').split(' ')
+        opcode, *args = [part for part
+                         in line.replace('\t', ' ').split(' ')
+                         if part]
         return Instruction(opcode, args, self.stats)
 
     def parse(self) -> None:
