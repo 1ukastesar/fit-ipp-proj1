@@ -43,6 +43,7 @@ PARSESCRIPT="parse.py"
 INTERPRETSCRIPT="interpret.php"
 INTERPRETERCLASS="Interpreter.php"
 TASK2_SUBDIR="student"
+EXTENSIONS="rozsireni"
 
 # Konstanty barev
 REDCOLOR='\033[1;31m'
